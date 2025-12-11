@@ -1,0 +1,4 @@
+com/togglecover/gateway/config/GatewayConfig.class
+com/togglecover/gateway/filter/JwtAuthenticationFilter$Config.class
+com/togglecover/gateway/filter/JwtAuthenticationFilter.class
+com/togglecover/gateway/ApiGatewayApplication.class

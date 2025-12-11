@@ -1,0 +1,17 @@
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/config/WebClientConfig.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/repository/UserProfileRepository.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/service/UserService.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/controller/DebugController.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/config/SwaggerConfig.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/dto/UserProfileRequest.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/config/SecurityConfig.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/feign/AuthServiceClient.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/config/FeignConfig.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/UserServiceApplication.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/security/JwtAuthFilter.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/exception/UserProfileNotFoundException.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/service/AuthService.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/controller/UserController.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/exception/GlobalExceptionHandler.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/dto/UserProfileResponse.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/user-service/src/main/java/com/togglecover/user/entity/UserProfile.java

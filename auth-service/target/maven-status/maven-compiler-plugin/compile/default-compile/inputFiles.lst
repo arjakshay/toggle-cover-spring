@@ -1,0 +1,13 @@
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/security/JwtAuthenticationFilter.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/config/SecurityConfig.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/controller/AuthController.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/dto/AuthResponse.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/security/JwtUtil.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/repository/UserRepository.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/dto/RegisterRequest.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/service/AuthService.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/dto/AuthRequest.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/AuthServiceApplication.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/controller/TokenController.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/entity/User.java
+/Users/akshayjadhav/Desktop/toggle-cover-spring/auth-service/src/main/java/com/togglecover/auth/controller/DebugController.java

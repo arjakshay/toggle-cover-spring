@@ -1,0 +1,17 @@
+com/togglecover/auth/dto/RegisterRequest.class
+com/togglecover/auth/dto/AuthResponse.class
+com/togglecover/auth/security/JwtUtil.class
+com/togglecover/auth/AuthServiceApplication.class
+com/togglecover/auth/dto/AuthRequest.class
+com/togglecover/auth/controller/TokenController.class
+com/togglecover/auth/repository/UserRepository.class
+com/togglecover/auth/security/JwtAuthenticationFilter.class
+com/togglecover/auth/dto/AuthResponse$AuthResponseBuilder.class
+com/togglecover/auth/entity/User.class
+com/togglecover/auth/service/AuthService.class
+com/togglecover/auth/entity/User$UserBuilder.class
+com/togglecover/auth/entity/User$UserStatus.class
+com/togglecover/auth/entity/User$UserType.class
+com/togglecover/auth/controller/AuthController.class
+com/togglecover/auth/controller/DebugController.class
+com/togglecover/auth/config/SecurityConfig.class

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: togglecover-postgres-auth
+    environment:
+      POSTGRES_DB: togglecover_auth
+      POSTGRES_USER: togglecover_user
+      POSTGRES_PASSWORD: togglecover_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    networks:
+      - togglecover-network
+
+  postgres-user:
+    image: postgres:15-alpine
+    container_name: togglecover-postgres-user
+    environment:
+      POSTGRES_DB: togglecover_user
+      POSTGRES_USER: togglecover_user
+      POSTGRES_PASSWORD: togglecover_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    networks:
+      - togglecover-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: togglecover-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    networks:
+      - togglecover-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: togglecover-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - togglecover-network
+
+networks:
+  togglecover-network:
+    driver: bridge
+
+volumes:
+  postgres_auth_data:
+  postgres_user_data:
