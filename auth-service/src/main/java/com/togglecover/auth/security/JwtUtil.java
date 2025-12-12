@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -21,7 +22,57 @@ public class JwtUtil {
     private String secret;
 
     @Value("${jwt.expiration}")
-    private Long expiration;
+    private Long accessTokenExpiration;
+
+    @Value("${jwt.refresh.expiration:2592000000}")
+    private Long refreshTokenExpiration;
+
+    // Original method (for backward compatibility)
+    public String generateToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("phone", user.getPhone());
+        claims.put("userType", user.getUserType().name());
+        claims.put("fullName", user.getFullName());
+
+        return createToken(claims, user.getId(), accessTokenExpiration);
+    }
+
+    // New method with session support
+    public String generateToken(User user, String sessionId, String deviceId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("phone", user.getPhone());
+        claims.put("userType", user.getUserType().name());
+        claims.put("fullName", user.getFullName());
+        claims.put("sessionId", sessionId);
+        claims.put("deviceId", deviceId != null ? deviceId : "unknown");
+        claims.put("tokenType", "ACCESS");
+
+        return createToken(claims, user.getId(), accessTokenExpiration);
+    }
+
+    public String generateRefreshToken(User user, String sessionId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("sessionId", sessionId);
+        claims.put("tokenType", "REFRESH");
+        claims.put("jti", UUID.randomUUID().toString());
+
+        return createToken(claims, user.getId(), refreshTokenExpiration);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject, Long expiration) {
+        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
+                .compact();
+    }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -46,37 +97,33 @@ public class JwtUtil {
     }
 
     public String extractUserId(String token) {
-        // User ID is stored in the subject claim
         return extractClaim(token, Claims::getSubject);
     }
 
     public String extractUsername(String token) {
-        // Username (phone) is stored as a custom claim
         Claims claims = extractAllClaims(token);
         return claims.get("phone", String.class);
     }
 
-    public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());       // Store user ID as custom claim
-        claims.put("phone", user.getPhone());     // Store phone as custom claim
-        claims.put("userType", user.getUserType().name());
-        claims.put("fullName", user.getFullName());
-
-        // Subject can be phone or user ID - choose one
-        return createToken(claims, user.getPhone());  // Using phone as subject
+    public String extractSessionId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("sessionId", String.class);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    public String extractDeviceId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("deviceId", String.class);
+    }
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)  // Subject is phone number
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key)
-                .compact();
+    public String extractTokenType(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("tokenType", String.class);
+    }
+
+    public User.UserType extractUserType(String token) {
+        Claims claims = extractAllClaims(token);
+        String userTypeStr = claims.get("userType", String.class);
+        return User.UserType.valueOf(userTypeStr);
     }
 
     public Boolean validateToken(String token) {
@@ -98,10 +145,5 @@ public class JwtUtil {
         debugInfo.put("subject", claims.getSubject());
         debugInfo.put("allClaims", claims);
         return debugInfo;
-    }
-
-    public User.UserType extractUserType(String token) {
-        Claims claims = extractAllClaims(token);
-        return User.UserType.valueOf(claims.get("userType", String.class));
     }
 }

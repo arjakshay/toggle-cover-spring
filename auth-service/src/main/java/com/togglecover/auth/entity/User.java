@@ -36,6 +36,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    // Add risk score field
+    @Builder.Default
+    private Integer riskScore = 0;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -44,6 +48,9 @@ public class User {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         status = UserStatus.ACTIVE;
+        if (riskScore == null) {
+            riskScore = 0;
+        }
     }
 
     @PreUpdate
@@ -62,6 +69,7 @@ public class User {
         ACTIVE,
         INACTIVE,
         SUSPENDED,
-        DELETED
+        DELETED,
+        LOCKED // Added for account lockout
     }
 }

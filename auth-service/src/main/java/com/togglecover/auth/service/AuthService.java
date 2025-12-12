@@ -1,28 +1,24 @@
 package com.togglecover.auth.service;
 
-import com.togglecover.auth.dto.AuthRequest;
-import com.togglecover.auth.dto.AuthResponse;
-import com.togglecover.auth.dto.RegisterRequest;
+import com.togglecover.auth.dto.*;
 import com.togglecover.auth.entity.User;
 import com.togglecover.auth.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.togglecover.auth.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.Date;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -30,6 +26,7 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByPhone(request.getPhone())) {
             throw new RuntimeException("Phone number already registered");
@@ -47,7 +44,7 @@ public class AuthService {
 
         user = userRepository.save(user);
 
-        String token = generateToken(user);
+        String token = jwtUtil.generateToken(user);
 
         return AuthResponse.builder()
                 .token(token)
@@ -59,6 +56,7 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByPhone(request.getPhone())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
@@ -71,7 +69,7 @@ public class AuthService {
             throw new RuntimeException("Account is not active");
         }
 
-        String token = generateToken(user);
+        String token = jwtUtil.generateToken(user);
 
         return AuthResponse.builder()
                 .token(token)
@@ -83,29 +81,29 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
+    public ApiResponse resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByPhone(request.getPhone())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Note: OTP verification should be done before calling this method
+        // OTP verification is handled by OtpService.verifyOtpForPasswordReset()
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ApiResponse.builder()
+                .success(true)
+                .message("Password reset successful")
+                .build();
+    }
+
     public boolean validateToken(String token) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
+            return jwtUtil.validateToken(token);
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private String generateToken(User user) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-
-        return Jwts.builder()
-                .setSubject(user.getId())
-                .claim("phone", user.getPhone())
-                .claim("userType", user.getUserType().name())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(key)
-                .compact();
     }
 }
