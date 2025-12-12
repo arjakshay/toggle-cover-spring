@@ -10,11 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -36,12 +37,25 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/swagger-ui.html",
                                 "/favicon.ico",
-                                "/h2-console/**",
-                                "/api/v1/debug/**"
+                                "/h2-console/**"
                         ).permitAll()
 
-                        // User endpoints require authentication
-                        .requestMatchers("/api/v1/users/**").authenticated()
+                        // User endpoints
+                        .requestMatchers("/api/v1/users/profile").authenticated()
+                        .requestMatchers("/api/v1/users/preferences").authenticated()
+                        .requestMatchers("/api/v1/users/profile/picture").authenticated()
+
+                        // Admin only endpoints
+                        .requestMatchers("/api/v1/users").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/**/verify").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/search").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/bulk").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/**/deactivate").hasRole("ADMIN")
+
+                        // User-specific endpoints - use method security instead
+                        .requestMatchers("/api/v1/users/{userId}").authenticated()
+                        .requestMatchers("/api/v1/users/{userId}/stats").authenticated()
+                        .requestMatchers("/api/v1/users/{userId}/activity").authenticated()
 
                         // All other requests require authentication
                         .anyRequest().authenticated()
